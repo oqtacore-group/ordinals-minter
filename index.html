@@ -1,0 +1,91 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+        <link rel="stylesheet" href="assets/styles.css">
+        <script src="assets/scripts.js"></script>
+        <title>Ordinals Minter</title>
+    </head>
+    <body>
+        <div class="content">
+            <h1>Ordinals Minter 🌿</h1>
+            Fast, convinient and secure way to use <a href="http://ordinals.com">Bitcoin Ordinals</a>
+            <hr>
+
+            <h2>Let's Mint</h2>
+            <form method="post" enctype="multipart/form-data" class="pure-form">
+                <div>
+                    <label for="metamask-connected"><b>Step 1. Connect MetaMask to pay for minting</b></label>
+                    <br>
+                    <a class="pure-button" onclick="connectMetaMask()">Connect MetaMask</a>
+                    <span id="metamask-connected">Not Connected</span>
+                </div>
+                <br>
+
+                <div>
+                    <label for="file"><b>Step 2. Upload file to be minted</b></label>
+                    <br>
+                    <div class="upload-btn-wrapper">
+                        <a class="pure-button">Upload a file</a>
+                        <span id="file-selected"></span>
+                        <input id="file-upload" type="file" name="file" onchange="showFilename()"/>
+                    </div>
+                </div>
+                <br>
+
+                <div>
+                    <label for="btc-address"><b>Step 3. Enter BTC address to receive your minted file. (If you don't have one, get it <a href="#">here</a>)</b></label>
+                    <br>
+                    <input id="btc-address" type="text" name="btc-address"/>
+                </div>
+                <br>
+
+                <div>
+                    <a class="pure-button pure-button-primary" onclick="startMinting()">Mint</a>
+                </div>
+            </form>
+
+            <hr>
+
+            <h2>FAQ</h3>
+
+            <h3>What Is This?</h3>
+            <p>
+                This is online service that provideas an easy way to upload your files inside <a href="http://ordinals.com">Bitcoin Ordinals</a>
+            </p>
+
+            <h3>How To Use?</h3>
+            <p>
+                Fill form below, connect your MetaMask account, confirm transaction and wait until all done.
+                <br>
+                <br>
+                Here is the demo:
+                <br>
+                <video width="100%" controls poster="assets/demo_placeholder.png">
+                    <source src="assets/demo.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </p>
+
+            <h3>What Will I Get?</h3>
+            <p>
+                You will get verified digital asset on your Bitcoin wallet.
+            </p>
+
+            <h3>How Much Will It Cost?</h3>
+            <p>
+                We ask 1$ per file mint, you will be asked to pay equivalent amount in ETH with you MetaMask wallet.
+            </p>
+
+            <h3>Can I use existing Bitcoin Wallet?</h3>
+            <p>
+                Yes, but it's recomended to create new one to store Bitcoin Ordinals and prevent it from mixing with other blocks.
+            </p>
+
+            <hr>
+            <div class="center">
+                <code>(c) <a href="https://oqtacore.com">Oqtacore</a> 2023</code>
+            </div>
+        </div>
+    </body>
+</html>
