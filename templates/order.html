@@ -1,0 +1,34 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+        <link rel="stylesheet" href="/assets/styles.css">
+        <script src="/assets/scripts.js"></script>
+        <title>Order Page | Ordinals Minter</title>
+    </head>
+    <body>
+        <div class="content">
+            <h1><a href="/">Ordinals Minter 🌿</a></h1>
+            Fast, convinient and secure way to use <a href="http://ordinals.com">Bitcoin Ordinals</a>
+            <hr>
+
+            <p>
+                <b>
+                    Your order is: {{ order_uuid }}
+                </b>
+            </p>
+
+            <p>
+                We received your image and minting it right now. It might take from 5 minutes up to 1 hour as Bitcoin Network can be busy.
+                <div class="center">
+                    <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+            </p>
+
+            <hr>
+            <div class="center">
+                <code>(c) <a href="https://oqtacore.com">Oqtacore</a> 2023</code>
+            </div>
+        </div>
+    </body>
+</html>
