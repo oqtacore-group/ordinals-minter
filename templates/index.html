@@ -13,7 +13,14 @@
             <hr>
 
             <h2>Let's Mint</h2>
-            <form method="post" enctype="multipart/form-data" class="pure-form">
+            <form
+                id="mint-form"
+                method="post"
+                enctype="multipart/form-data"
+                class="pure-form"
+                action="/api/orders"
+                onsubmit="return startMinting(event);"
+            >
                 <div>
                     <label for="metamask-connected"><b>Step 1. Connect MetaMask to pay for minting</b></label>
                     <br>
@@ -36,12 +43,12 @@
                 <div>
                     <label for="btc-address"><b>Step 3. Enter BTC address to receive your minted file. (If you don't have one, get it <a href="#">here</a>)</b></label>
                     <br>
-                    <input id="btc-address" type="text" name="btc-address"/>
+                    <input id="btc-address" type="text" name="receiver_btc_addres"/>
                 </div>
                 <br>
 
                 <div>
-                    <a class="pure-button pure-button-primary" onclick="startMinting()">Mint</a>
+                    <button class="pure-button pure-button-primary" type="submit">Mint</button>
                 </div>
             </form>
 

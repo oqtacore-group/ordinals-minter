@@ -45,10 +45,19 @@ const createOrderTransaction = async function () {
       ],
     };
     window.ethereum.request(payload).then((txHash) => console.log(txHash)).catch((err) => console.error(err));
+    // TODO: Save txHash to backend
 };
 
 
-const startMinting = async function () {
+const startMinting = async function (event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to continue?")) {
+        const formTag = document.getElementById("mint-form");
+        formTag.submit();
+    }
+    return
+
+
     // TODO: Validate form fields
     await createOrderTransaction();
     // TODO: Send form to backend

@@ -1,5 +1,8 @@
-from fastapi import FastAPI, Request
+import os
+import uuid
+from fastapi import FastAPI, Form, Request, UploadFile, status
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 import uvicorn
 
 from fastapi.templating import Jinja2Templates
@@ -18,13 +21,32 @@ def index(req: Request):
     return templates.TemplateResponse('index.html', context)
 
 
-@app.get('/order/{order_uuid}')
+@app.get('/orders/{order_uuid}')
 def order(req: Request, order_uuid: str):
     context = {
         'request': req,
         'order_uuid': order_uuid,
     }
     return templates.TemplateResponse('order.html', context)
+
+
+@app.post('/api/orders')
+async def order(
+    file: UploadFile,
+    order_uuid: str = '123',
+    receiver_btc_addres: str = Form(),
+):
+    order_uuid = str(uuid.uuid4())
+    os.makedirs('./storage', exist_ok=True)
+
+    filename = file.filename
+    with open(f'./storage/{filename}', 'w', encoding='utf-8') as file:
+        file.write(receiver_btc_addres)
+
+    return RedirectResponse(
+        f'/orders/{order_uuid}',
+        status_code=status.HTTP_302_FOUND,
+    )
 
 
 if __name__ == '__main__':
