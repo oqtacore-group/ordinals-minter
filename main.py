@@ -1,6 +1,7 @@
 import os
 import time
 import uuid
+import aiofiles
 from fastapi import FastAPI, Form, Request, UploadFile, status, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
@@ -71,9 +72,11 @@ async def order(
         db.add(order)
         db.commit()
 
-    filename = file.filename
-    with open(f'./storage/{tx_hash}_{filename}', 'w', encoding='utf-8') as file:
-        file.write(receiver_btc_addres)
+    os.makedirs('./storage', exist_ok=True)
+    filepath = f'./storage/{tx_hash}_{file.filename}'
+    async with aiofiles.open(filepath, 'wb') as out_file:
+        while content := await file.read(1024):
+            await out_file.write(content)
 
     return RedirectResponse(
         f'/orders/{order_uuid}',
