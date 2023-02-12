@@ -1,0 +1,4 @@
+
+DB_URL = 'sqlite:///ordinals_minter.db'
+RECEIVER_ETH_ADDR = '0x76e11ec0963db2Af995D5FC1B45Fb2d7b1Ec0890'
+ETH_RPC_URL = 'http://localhost:8545'
