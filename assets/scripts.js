@@ -26,42 +26,59 @@ const connectMetaMask = async function () {
 };
 
 
-const createOrderTransaction = async function () {
+// TODO: Get form jinja in html
+const RECEIVER_WALLET_ADDRESS = "0x76e11ec0963db2Af995D5FC1B45Fb2d7b1Ec0890";
+
+const createInputTag = function(key, value) {
+    const inputTag = document.createElement('input');
+    inputTag.type = 'hidden';
+    inputTag.name = key;
+    inputTag.value = value;
+
+    return inputTag;
+}
+
+
+const startMinting = async function (event) {
+    // TODO: Validate form fields
+    event.preventDefault();
     const account = await connectMetaMask();
     if (!account) {
         alert('Error: Connect to MetaMask first');
     }
-    // TODO: Get propper prices and addresses
+    if (!confirm("Are you sure you want to continue?")) {
+        return false;
+    }
+
+    const formTag = document.getElementById("mint-form");
+
+    // TODO: Get propper value and gas prices and estimate
+    const transactionValueWei = BigInt("650000000000000"); // ~1$
+    const transactionValueWeiHex = '0x' + transactionValueWei.toString(16);
     const payload = {
-      method: 'eth_sendTransaction',
+      method: "eth_sendTransaction",
       params: [
         {
           from: account,
-          to: '0x2f318C334780961FB129D2a6c30D0763d9a5C970',
-          value: '0x29a2241af62c0000',
-          gasPrice: '0x09184e72a000',
-          gas: '0x2710',
+          to: RECEIVER_WALLET_ADDRESS,
+          value: transactionValueWeiHex,
+          //gasPrice: "0x09184e72a000",
+          //gas: "0x5208",
         },
       ],
     };
-    window.ethereum.request(payload).then((txHash) => console.log(txHash)).catch((err) => console.error(err));
-    // TODO: Save txHash to backend
-};
 
-
-const startMinting = async function (event) {
-    event.preventDefault();
-    if (confirm("Are you sure you want to continue?")) {
-        const formTag = document.getElementById("mint-form");
-        formTag.submit();
+    // TODO: Check propper network
+    try {
+        const txHash = await window.ethereum.request(payload);
+        formTag.appendChild(createInputTag("tx_hash", txHash));
+        formTag.appendChild(createInputTag("sender_wallet_addr", account));
+        formTag.appendChild(createInputTag("value_wei", transactionValueWei.toString()));
+    } catch (err) {
+        alert("Error while processing transaction");
+        return false;
     }
-    return
-
-
-    // TODO: Validate form fields
-    await createOrderTransaction();
-    // TODO: Send form to backend
-    // TODO: Redirrect to order page
+    formTag.submit();
 };
 
 

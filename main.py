@@ -33,11 +33,14 @@ def order(req: Request, order_uuid: str):
 @app.post('/api/orders')
 async def order(
     file: UploadFile,
-    order_uuid: str = '123',
+    tx_hash: str = Form(),
+    sender_wallet_addr: str = Form(),
+    value_wei: str = Form(),
     receiver_btc_addres: str = Form(),
 ):
+    # TODO: Save timestamp
+    # TODO: Save order to database
     order_uuid = str(uuid.uuid4())
-    os.makedirs('./storage', exist_ok=True)
 
     filename = file.filename
     with open(f'./storage/{filename}', 'w', encoding='utf-8') as file:
