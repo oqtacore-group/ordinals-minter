@@ -62,6 +62,14 @@ async def order(
         raise HTTPException(status_code=400, detail='File too big')
 
     with get_db() as db:
+        existing_order = db.exec(
+            sqlmodel
+            .select(MintOrder)
+            .where(MintOrder.tx_hash == tx_hash)
+        ).first()
+        if existing_order is not None:
+            raise HTTPException(status_code=400, detail='Order already exist')
+
         order = MintOrder(
             order_uuid=order_uuid,
             created_ts=time.time(),
