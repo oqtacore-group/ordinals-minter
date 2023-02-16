@@ -11,7 +11,7 @@ import uvicorn
 from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
-from app.settings import RECEIVER_ETH_ADDR
+from app.settings import MAX_FILESIZE_BYTES, RECEIVER_ETH_ADDR
 from app.tasks import start_checking_order
 
 app = FastAPI()
@@ -57,6 +57,9 @@ async def order(
     receiver_btc_addres: str = Form(),
 ):
     order_uuid = str(uuid.uuid4())
+
+    if file.size > MAX_FILESIZE_BYTES:
+        raise HTTPException(status_code=400, detail='File too big')
 
     with get_db() as db:
         order = MintOrder(
