@@ -1,0 +1,70 @@
+import time
+
+import sqlmodel
+
+from huey import SqliteHuey
+from huey.exceptions import RetryTask
+from web3 import Web3
+
+from app.database import MintOrder, get_db
+from app.settings import ETH_RPC_URL
+
+web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
+huey = SqliteHuey(filename='huey.db')
+
+
+import functools
+
+def exp_backoff_task(retries=10, retry_backoff=1.15, retry_delay=15):
+    def deco(fn):
+        @functools.wraps(fn)
+        def inner(*args, **kwargs):
+            # We will register this task with `context=True`, which causes
+            # Huey to pass the task instance as a keyword argument to the
+            # decorated task function. This enables us to modify its retry
+            # delay, multiplying it by our backoff factor, in the event of
+            # an exception.
+            task = kwargs.pop('task')
+            try:
+                return fn(*args, **kwargs)
+            except Exception as exc:
+                task.retry_delay *= retry_backoff
+                raise exc
+
+        # Register our wrapped task (inner()), which handles delegating to
+        # our function, and in the event of an unhandled exception,
+        # increases the retry delay by the given factor.
+        return huey.task(
+            retries=retries,
+            retry_delay=retry_delay,
+            context=True
+        )(inner)
+    return deco
+
+
+@exp_backoff_task()
+def start_checking_order(order_uuid):
+    with get_db() as db:
+        order = db.exec(
+            sqlmodel
+            .select(MintOrder)
+            .where(MintOrder.order_uuid == order_uuid)
+        ).first()
+        if not order:
+            raise Exception('Order not created yet')
+
+        txn = web3.eth.get_transaction(order.tx_hash)
+        print(txn)
+
+        txn_receipt = web3.eth.get_transaction_receipt(order.tx_hash)
+        is_mined = (txn_receipt['status'] == 1)
+        print(txn_receipt)
+        print(f'{is_mined = }')
+
+        if is_mined:
+            order.status = 'DONE'
+            db.add(order)
+            db.commit()
+
+    return True
+

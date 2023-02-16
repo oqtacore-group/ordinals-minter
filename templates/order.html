@@ -18,15 +18,17 @@
                 </b>
             </p>
 
-            <p>
-                We received your file and minting it right now. It might take from 5 minutes up to 1 hour as Bitcoin Network can be busy.
-            </p>
-            <div class="center">
-                <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-            </div>
-            <p>
-                {{ order }}
-            </p>
+            {% if order.status != 'DONE' %}
+                <p>
+                    We received your file and minting it right now. It might take from 5 minutes up to 1 hour as Bitcoin Network can be busy. Try refreshing this page later.
+                </p>
+                <div class="center">
+                    <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+            {% else %}
+                <img src="https://cataas.com/cat/says/{{ order_uuid }}" alt="order result">
+                <p>{{ order }}</p>
+            {% endif %}
 
             <hr>
             <div class="center">

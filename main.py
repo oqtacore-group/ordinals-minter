@@ -12,6 +12,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
 from app.settings import RECEIVER_ETH_ADDR
+from app.tasks import start_checking_order
 
 app = FastAPI()
 templates = Jinja2Templates(directory='templates')
@@ -67,10 +68,12 @@ async def order(
             receiver_eth_addr=RECEIVER_ETH_ADDR,
             value_wei=value_wei,
             receiver_btc_addres=receiver_btc_addres,
-            mint_status='WAIT_MINTING',
+            status='WAIT_MINTING',
         )
         db.add(order)
         db.commit()
+
+    start_checking_order(order_uuid)
 
     os.makedirs('./storage', exist_ok=True)
     filepath = f'./storage/{tx_hash}_{file.filename}'

@@ -33,7 +33,7 @@ class MintOrder(sqlmodel.SQLModel, table=True):
     receiver_eth_addr: str
     value_wei: str
     receiver_btc_addres: str
-    mint_status: str
+    status: str
 
     @property
     def created(self) -> datetime.datetime:
