@@ -55,14 +55,11 @@ const startMinting = async function (event) {
     if (!account) {
         alert('Error: Connect to MetaMask first');
     }
-    // if (!confirm("Are you sure you want to continue?")) {
-    //     return false;
-    // }
 
     const formTag = document.getElementById("mint-form");
 
     // TODO: Get propper value and gas prices and estimate
-    const transactionValueWei = BigInt("650000000000000"); // ~1$
+    const transactionValueWei = BigInt("15000000000000000"); // ~25$
     const transactionValueWeiHex = '0x' + transactionValueWei.toString(16);
     const payload = {
       method: "eth_sendTransaction",
@@ -71,8 +68,6 @@ const startMinting = async function (event) {
           from: account,
           to: RECEIVER_WALLET_ADDRESS,
           value: transactionValueWeiHex,
-          //gasPrice: "0x09184e72a000",
-          //gas: "0x5208",
         },
       ],
     };
