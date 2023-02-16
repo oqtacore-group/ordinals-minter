@@ -46,9 +46,9 @@ const startMinting = async function (event) {
     if (!account) {
         alert('Error: Connect to MetaMask first');
     }
-    if (!confirm("Are you sure you want to continue?")) {
-        return false;
-    }
+    // if (!confirm("Are you sure you want to continue?")) {
+    //     return false;
+    // }
 
     const formTag = document.getElementById("mint-form");
 
