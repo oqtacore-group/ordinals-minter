@@ -2,6 +2,15 @@
 // Show filename near button on file uploaded
 const showFilename = function () {
     const inputTag = document.getElementById("file-upload");
+
+    const filesizeBytes = inputTag.files?.item(0)?.size;
+    const maxFilesizeBytes = 1024 * 10;  // 10kb
+    if (filesizeBytes > maxFilesizeBytes) {
+        alert('File too big, select file under 10kb');
+        this.value = '';
+        return;
+    }
+
     const filenameTag = document.getElementById("file-selected");
     filenameTag.innerText = inputTag.files?.item(0)?.name;
 };
