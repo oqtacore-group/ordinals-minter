@@ -11,6 +11,7 @@ class OrdWrapper(object):
 
     def inscribe(self, filepath: str, fee_rate: int=10):
         proc = self._run_command(['wallet', 'inscribe', '--dry-run', '--fee-rate', str(fee_rate), filepath])
+        #proc = self._run_command(['wallet', 'inscribe', '--fee-rate', str(fee_rate), filepath])
 
         return json.loads(proc.stdout)
 

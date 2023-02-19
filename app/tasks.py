@@ -66,8 +66,10 @@ def start_checking_order(order_uuid):
         if is_mined:
             #ord_wrapper = OrdWrapperMock()
             ord_wrapper = OrdWrapper()
+
+            ord_wrapper.index()
             try:
-                stdout = json.dumps(ord_wrapper.inscribe(order.filepath))
+                stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=10))
                 status = 'MINT_STARTED'
             except Exception as e:
                 stdout = str(e)
