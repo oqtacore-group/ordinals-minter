@@ -13,7 +13,8 @@ import uvicorn
 from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
-from app.settings import MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR
+from app.settings import MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
+from app.shared.telegram import tg_send_message
 from app.tasks import start_checking_order
 
 app = FastAPI()
@@ -88,6 +89,7 @@ async def order(
             status='CHECKING_PAYMENT',
         )
         order_filepath = order.filepath
+        tg_send_message(f'New order: {order}', TG_ALERTS_CHANNEL)
         db.add(order)
         db.commit()
 
