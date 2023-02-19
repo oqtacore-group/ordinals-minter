@@ -1,6 +1,7 @@
 import decimal
 import os
 import time
+from typing import Optional
 import uuid
 import aiofiles
 from fastapi import FastAPI, Form, Request, UploadFile, status, HTTPException
@@ -55,7 +56,7 @@ async def order(
     tx_hash: str = Form(),
     sender_wallet_addr: str = Form(),
     value_wei: str = Form(),
-    receiver_btc_addres: str = Form(),
+    receiver_btc_addres: Optional[str] = Form(''),
 ):
     order_uuid = str(uuid.uuid4())
 
