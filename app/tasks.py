@@ -8,7 +8,7 @@ from huey.exceptions import RetryTask
 from web3 import Web3
 
 from app.database import MintOrder, get_db
-from app.ordwrapper import OrdWrapperMock
+from app.ordwrapper import OrdWrapper, OrdWrapperMock
 from app.settings import ETH_RPC_URL
 
 web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
@@ -64,7 +64,8 @@ def start_checking_order(order_uuid):
         print(f'{is_mined = }')
 
         if is_mined:
-            ord_wrapper = OrdWrapperMock()
+            #ord_wrapper = OrdWrapperMock()
+            ord_wrapper = OrdWrapper()
             try:
                 stdout = json.dumps(ord_wrapper.inscribe(order.filepath))
                 status = 'MINT_STARTED'
