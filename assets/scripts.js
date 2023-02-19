@@ -27,6 +27,7 @@ const connectMetaMask = async function () {
     try {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         metamaskAccTag.innerText = accounts[0];
+        // await ethereum.request({method: 'wallet_switchEthereumChain', params: [{ chainId: '0x1' }]});
         return accounts[0];
     } catch {
         metamaskAccTag.innerText = `Not Connected`;
