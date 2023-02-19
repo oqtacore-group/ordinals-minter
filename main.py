@@ -89,7 +89,7 @@ async def order(
             status='CHECKING_PAYMENT',
         )
         order_filepath = order.filepath
-        tg_send_message(f'New order: {order}', TG_ALERTS_CHANNEL)
+        tg_send_message(f'<b>New order</b><br><br><code>{order}</code>', TG_ALERTS_CHANNEL)
         db.add(order)
         db.commit()
 

@@ -19,9 +19,9 @@ def tg_send_message(text: str, chat_id: str, notify=True):
     return telegram_command(
         'sendMessage',
         {
-            'text': html.escape(text),
+            'text': text,
             'chat_id': chat_id,
-            'parse_mode': 'markdown',
+            'parse_mode': 'html',
 			'disable_notification': not notify,
             'disable_web_page_preview': True,
         },
