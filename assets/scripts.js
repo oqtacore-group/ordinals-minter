@@ -4,9 +4,9 @@ const showFilename = function () {
     const inputTag = document.getElementById("file-upload");
 
     const filesizeBytes = inputTag.files?.item(0)?.size;
-    const maxFilesizeBytes = 1024 * 10;  // 10kb
+    const maxFilesizeBytes = 1024 * 20;  // 20kb
     if (filesizeBytes > maxFilesizeBytes) {
-        alert('File too big, select file under 10kb');
+        alert('File too big, select file under 20kb');
         this.value = '';
         return;
     }
