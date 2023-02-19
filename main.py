@@ -1,4 +1,5 @@
 import decimal
+import json
 import os
 import time
 from typing import Optional
@@ -89,7 +90,12 @@ async def order(
             status='CHECKING_PAYMENT',
         )
         order_filepath = order.filepath
-        tg_send_message(f'<b>New order</b><br><br><code>{order}</code>', TG_ALERTS_CHANNEL)
+
+        order_dict = order.__dict__
+        order_dict.pop('_sa_instance_state')
+        order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
+        r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
+
         db.add(order)
         db.commit()
 

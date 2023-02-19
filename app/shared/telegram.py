@@ -1,11 +1,14 @@
 import html
+import json
 import os
 import sys
 
 import requests
+import sqlmodel
 
 sys.path.append('.')
 sys.path.append('..')
+from app.database import MintOrder, get_db
 from app.settings import TG_ALERTS_CHANNEL, TG_BOT_TOKEN
 
 
@@ -28,6 +31,15 @@ def tg_send_message(text: str, chat_id: str, notify=True):
     )
 
 if __name__ == '__main__':
-    r = tg_send_message('Hello', TG_ALERTS_CHANNEL)
+    with get_db() as db:
+        order = db.exec(
+            sqlmodel
+            .select(MintOrder)
+        ).first()
+
+        order_dict = order.__dict__
+        order_dict.pop('_sa_instance_state')
+        order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
+        r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
     print(r)
     print(123)
