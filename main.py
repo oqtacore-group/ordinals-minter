@@ -1,3 +1,4 @@
+import copy
 import decimal
 import json
 import os
@@ -91,7 +92,7 @@ async def order(
         )
         order_filepath = order.filepath
 
-        order_dict = order.__dict__
+        order_dict = copy.deepcopy(order.__dict__)
         order_dict.pop('_sa_instance_state')
         order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
         r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
