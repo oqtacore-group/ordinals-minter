@@ -18,15 +18,28 @@
                 </b>
             </p>
 
-            {% if order.status != 'DONE' %}
+            {% if order.status == 'CHECKING_PAYMENT' %}
                 <p>
-                    We received your file and minting it right now. It might take from 5 minutes up to 1 hour as Bitcoin Network can be busy. Try refreshing this page later.
+                    We received your order and checking payment right now, soon we will start creating inscription. Reload this page in 2-5 minutes.
                 </p>
                 <div class="center">
                     <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 </div>
-            {% else %}
-                <img src="https://cataas.com/cat/says/{{ order_uuid }}" alt="order result">
+                <p>{{ order }}</p>
+            {% elif order.status == 'MINT_STARTED' %}
+                <p>
+                    We received your file and minting it right now. It might take from 5 minutes up to several hours as Bitcoin Network can be busy.
+                </p>
+                <p>
+                    Your inscription will be ready when this Bitcoin Transaction will be mined: <a href="{{order.reveal_tx_url}}">mempool.space</a>
+                </p>
+                <p>
+                    Your inscription will be available here: <a href="{{order.ordinals_url}}">ordinals.com</a>
+                </p>
+            {% elif order.status == 'MINT_ERROR' %}
+                <p>
+                    Sadly but there were an error while processing your order, please contact us and we will help you with refund or manual uploading.
+                </p>
                 <p>{{ order }}</p>
             {% endif %}
 

@@ -85,16 +85,16 @@ async def order(
             receiver_eth_addr=RECEIVER_ETH_ADDR,
             value_wei=value_wei,
             receiver_btc_addres=receiver_btc_addres,
-            status='WAIT_MINTING',
+            status='CHECKING_PAYMENT',
         )
+        order_filepath = order.filepath
         db.add(order)
         db.commit()
 
     start_checking_order(order_uuid)
 
     os.makedirs('./storage', exist_ok=True)
-    filepath = f'./storage/{tx_hash}_{file.filename}'
-    async with aiofiles.open(filepath, 'wb') as out_file:
+    async with aiofiles.open(order_filepath, 'wb') as out_file:
         while content := await file.read(1024):
             await out_file.write(content)
 

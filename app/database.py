@@ -1,6 +1,9 @@
 import contextlib
 import dataclasses
 import datetime
+import json
+import pathlib
+from typing import Optional
 
 import sqlmodel
 
@@ -34,6 +37,22 @@ class MintOrder(sqlmodel.SQLModel, table=True):
     value_wei: str
     receiver_btc_addres: str
     status: str
+    ord_stdout: Optional[str] = None
+
+    @property
+    def filepath(self) -> str:
+        rel_path = f'./storage/{self.tx_hash}_{self.filename}'
+        return pathlib.Path(rel_path).absolute()
+
+    @property
+    def reveal_tx_url(self) -> str:
+        tx_hash = json.loads(self.ord_stdout)['reveal']
+        return f'https://mempool.space/tx/{tx_hash}'
+
+    @property
+    def ordinals_url(self) -> str:
+        insctiption_id = json.loads(self.ord_stdout)['inscription']
+        return f'https://ordinals.com/inscription/{insctiption_id}'
 
     @property
     def created(self) -> datetime.datetime:
