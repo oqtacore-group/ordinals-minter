@@ -37,7 +37,8 @@ const connectMetaMask = async function () {
 
 
 // TODO: Get form jinja in html
-const RECEIVER_WALLET_ADDRESS = "0x76e11ec0963db2Af995D5FC1B45Fb2d7b1Ec0890";
+//const RECEIVER_WALLET_ADDRESS = "0x76e11ec0963db2Af995D5FC1B45Fb2d7b1Ec0890"; // Dev
+const RECEIVER_WALLET_ADDRESS = "0x1ab373A9791A9D44f6065CA522d22eD0d8eDD3C7"; // Prod
 
 const createInputTag = function(key, value) {
     const inputTag = document.createElement('input');
