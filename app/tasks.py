@@ -9,7 +9,8 @@ from web3 import Web3
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper, OrdWrapperMock
-from app.settings import ETH_RPC_URL
+from app.settings import ETH_RPC_URL, TG_ALERTS_CHANNEL
+from app.shared.telegram import tg_send_message
 
 web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
 huey = SqliteHuey(filename='huey.db')
@@ -77,8 +78,15 @@ def start_checking_order(order_uuid):
 
             order.ord_stdout = stdout
             order.status = status
+
             db.add(order)
             db.commit()
+
+            if status == 'MINT_ERROR':
+                order_dict = order.__dict__
+                order_dict.pop('_sa_instance_state')
+                order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
+                r = tg_send_message(f'<b>Error</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
 
     return True
 

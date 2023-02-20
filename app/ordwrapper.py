@@ -11,10 +11,16 @@ class OrdWrapper(object):
 
     def inscribe(self, filepath: str, fee_rate: int=10):
         proc = self._run_command(['wallet', 'inscribe', '--dry-run', '--fee-rate', str(fee_rate), filepath])
-        print(f'stdout: {proc.stdout = }\n{proc.stderr = }', flush=True)
         #proc = self._run_command(['wallet', 'inscribe', '--fee-rate', str(fee_rate), filepath])
+        message = f'stdout: {proc.stdout = }\n{proc.stderr = }'
+        print(message, flush=True)
 
-        return json.loads(proc.stdout)
+        try:
+            res = json.loads(proc.stdout)
+        except:
+            raise Exception(message)
+
+        return res
 
     def get_balance(self):
         proc = self._run_command(['wallet', 'balance'])
