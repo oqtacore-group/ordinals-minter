@@ -42,7 +42,14 @@
                     <div class="upload-btn-wrapper">
                         <a class="pure-button">Upload a file</a>
                         <span id="file-selected"></span>
-                        <input required id="file-upload" type="file" name="file" onchange="showFilename()"/>
+                        <input
+                            required
+                            id="file-upload"
+                            type="file"
+                            name="file"
+                            onchange="showFilename()"
+                            accept=".apng,.asc,.flac,.gif,.glb,.html,.jpg,.json,.mp3,.mp4,.pdf,.png,.stl,.svg,.txt,.wav,.webm,.webp,.yaml"
+                        />
                     </div>
                 </div>
                 <br>
@@ -94,6 +101,11 @@
             <h3>Can I use existing Bitcoin Wallet?</h3>
             <p>
                 Yes, but it's recomended to create new one to store Bitcoin Ordinals and prevent it from mixing with other blocks.
+            </p>
+
+            <h3>Which filetypes are supported?</h3>
+            <p>
+                Bitcoin Ordinals support the following extensions: .apng, .asc, .flac, .gif, .glb, .html, .jpg, .json, .mp3, .mp4, .pdf, .png, .stl, .svg, .txt, .wav, .webm, .webp, .yaml
             </p>
 
             <h3>Have troubles or questions?</h3>
