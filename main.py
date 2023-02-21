@@ -15,6 +15,7 @@ import uvicorn
 from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
+from app.ordwrapper import OrdWrapper
 from app.settings import MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
 from app.shared.telegram import tg_send_message
 from app.tasks import start_checking_order
@@ -51,6 +52,17 @@ def order(req: Request, order_uuid: str):
         'order': order,
     }
     return templates.TemplateResponse('order.html', context)
+
+
+@app.post('/api/estimate_price')
+async def estimate_price_route(filesize_bytes: int, fee_rate: int):
+    ord_wrapper = OrdWrapper()
+    try:
+        res = ord_wrapper.estimate_price(filesize_bytes, fee_rate)
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f'Error: {e}')
+
+    return json.dumps(res, default=str)
 
 
 @app.post('/api/orders')
