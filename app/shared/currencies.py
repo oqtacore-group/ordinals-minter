@@ -37,6 +37,11 @@ def usd_to_eth(usd_amount: decimal.Decimal) -> decimal.Decimal:
     return eth_amount
 
 
+def eth_to_wei(eth_amount: decimal.Decimal) -> decimal.Decimal:
+    wei_amount = decimal.Decimal(eth_amount) * decimal.Decimal('1000000000000000000')
+    return wei_amount
+
+
 if __name__ == '__main__':
     print(usd_to_eth(100))
     print(usd_to_eth(573))

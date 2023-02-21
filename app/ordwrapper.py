@@ -4,7 +4,7 @@ import subprocess
 import tempfile
 import time
 
-from app.shared.currencies import sat_to_usd, usd_to_eth
+from app.shared.currencies import eth_to_wei, sat_to_usd, usd_to_eth
 
 
 class OrdWrapper(object):
@@ -42,6 +42,11 @@ class OrdWrapper(object):
             sat_price = self._estimate_file_sat_price(tmp.name, fee_rate)
             usd_price = sat_to_usd(sat_price)
             eth_price = usd_to_eth(usd_price)
+            wei_price = eth_to_wei(eth_price)
+
+            service_fee_usd = usd_price * decimal.Decimal(0.1) + decimal.Decimal(5)
+            total_price_eth = usd_to_eth(usd_price + service_fee_usd)
+            total_price_wei = eth_to_wei(total_price_eth)
 
         return {
             'bytes': filesize_bytes,
@@ -49,7 +54,9 @@ class OrdWrapper(object):
             'sat': sat_price,
             'usd': usd_price,
             'eth': eth_price,
-            'wei': eth_price * decimal.Decimal('1000000000000000000'),
+            'wei': wei_price,
+            'service_fee_usd': service_fee_usd,
+            'total_price_wei': total_price_wei,
         }
 
     def get_balance(self):
