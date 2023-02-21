@@ -33,7 +33,7 @@ class OrdWrapper(object):
         if filesize_bytes > 1024 * 1024 * 5:  # 5mb = 5 * 1024kb
             raise Exception('File too big, use filesize under 5mb')
 
-        with tempfile.NamedTemporaryFile() as tmp:
+        with tempfile.NamedTemporaryFile(suffix='.txt') as tmp:
             # Create file of given size
             for _ in range(filesize_bytes):
                 tmp.write(b'a')
