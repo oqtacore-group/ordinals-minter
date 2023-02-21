@@ -128,5 +128,5 @@ const update_price = async function (price_usd, service_fee_usd, total_price_wei
 
 
 addEventListener('DOMContentLoaded', (event) => {
-    connectMetaMask();
+    //connectMetaMask();
 });
