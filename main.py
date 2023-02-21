@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper
-from app.settings import MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
+from app.settings import FEE_RATE, MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
 from app.shared.telegram import tg_send_message
 from app.tasks import start_checking_order
 
@@ -76,8 +76,6 @@ async def order(
     order_uuid = str(uuid.uuid4())
 
     value_wei_decimal = decimal.Decimal(value_wei)
-    if value_wei_decimal < MIN_WEI_VALUE:
-        raise HTTPException(status_code=400, detail='Value too small')
 
     if file.size > MAX_FILESIZE_BYTES:
         raise HTTPException(status_code=400, detail='File too big')
@@ -108,6 +106,15 @@ async def order(
         order_dict.pop('_sa_instance_state')
         order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
         r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
+
+        ord_wrapper = OrdWrapper()
+        prices = ord_wrapper.estimate_price(file.size, FEE_RATE)
+        if decimal.Decimal(value_wei_decimal) < prices['total_price_wei']:
+            order.status = 'ERROR_SMALL_WEI'
+            db.add(order)
+            db.commit()
+            print(order, prices)
+            raise HTTPException(status_code=400, detail='Wei value too small. Contact support if you think this is an error.')
 
         db.add(order)
         db.commit()
