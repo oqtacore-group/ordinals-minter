@@ -9,7 +9,7 @@ from web3 import Web3
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper, OrdWrapperMock
-from app.settings import ETH_RPC_URL, TG_ALERTS_CHANNEL
+from app.settings import ETH_RPC_URL, FEE_RATE, TG_ALERTS_CHANNEL
 from app.shared.telegram import tg_send_message
 
 web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
@@ -70,7 +70,7 @@ def start_checking_order(order_uuid):
 
             ord_wrapper.index()
             try:
-                stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=15))
+                stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=FEE_RATE))
                 status = 'MINT_STARTED'
             except Exception as e:
                 stdout = str(e)
