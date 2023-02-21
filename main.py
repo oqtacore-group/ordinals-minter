@@ -54,7 +54,7 @@ def order(req: Request, order_uuid: str):
     return templates.TemplateResponse('order.html', context)
 
 
-@app.post('/api/estimate_price')
+@app.get('/api/estimate_price')
 async def estimate_price_route(filesize_bytes: int, fee_rate: int):
     ord_wrapper = OrdWrapper()
     try:
