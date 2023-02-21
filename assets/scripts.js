@@ -17,7 +17,9 @@ const showFilename = async function () {
         update_price(prices.usd, prices.service_fee_usd, prices.total_price_wei);
     } catch {
         alert("Can't process this file now. Try later or try another file");
+        this.value = '';
         update_price(0, 0, 0);
+        return;
     }
 
     const filenameTag = document.getElementById("file-selected");
