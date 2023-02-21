@@ -59,6 +59,7 @@ def start_checking_order(order_uuid):
         txn = web3.eth.get_transaction(order.tx_hash)
         print(txn)
 
+        # TODO: Check wei size
         txn_receipt = web3.eth.get_transaction_receipt(order.tx_hash)
         is_mined = (txn_receipt['status'] == 1)
         print(txn_receipt)
