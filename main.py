@@ -62,7 +62,7 @@ async def estimate_price_route(filesize_bytes: int, fee_rate: int):
     except Exception as e:
         raise HTTPException(status_code=503, detail=f'Error: {e}')
 
-    return json.dumps(res, default=str)
+    return res
 
 
 @app.post('/api/orders')
