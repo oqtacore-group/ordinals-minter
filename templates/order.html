@@ -25,16 +25,20 @@
                 <div class="center">
                     <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 </div>
-                <p>{{ order }}</p>
             {% elif order.status == 'MINT_STARTED' %}
+                <b>All done! Congrats on the great work!</b>
                 <p>
-                    We received your file and minting it right now. It might take from 5 minutes up to several hours as Bitcoin Network can be busy.
+                    We received your file and we are inscribing it right now onto the Bitcoin blockchain. It might take from 5 minutes up to several hours as Bitcoin Network can be busy.
                 </p>
                 <p>
-                    Your inscription will be ready when this Bitcoin Transaction will be mined: <a href="{{order.reveal_tx_url}}">mempool.space</a>
+                    Please note that this page will NOT change once your Bitcoin Ordinal is minted (we are not tracking Bitcoin Ordinals as of now).
+                </p>
+                <b>How to check my inscription?</b>
+                <p>
+                    1. Your inscription will be ready once this Bitcoin Transaction is mined: <a href="{{order.reveal_tx_url}}">{{order.reveal_tx_url}}</a>
                 </p>
                 <p>
-                    Your inscription will be available here: <a href="{{order.ordinals_url}}">ordinals.com</a>
+                    2. When the transaction is mined, your inscription will become available here imemdiately: <a href="{{order.ordinals_url}}">{{order.ordinals_url}}</a>
                 </p>
             {% elif order.status == 'MINT_ERROR' %}
                 <p>

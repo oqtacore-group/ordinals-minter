@@ -6,6 +6,10 @@ body {
     color: #444;
 }
 
+a {
+  word-wrap: break-word !important;
+}
+
 .upload-btn-wrapper {
   position: relative;
   overflow: hidden;
