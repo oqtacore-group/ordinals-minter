@@ -1,16 +1,23 @@
-
 // Show filename near button on file uploaded
-const showFilename = function () {
+const showFilename = async function () {
     gtag('event', 'file_uploaded');
     const inputTag = document.getElementById("file-upload");
 
     const filesizeBytes = inputTag.files?.item(0)?.size;
-    const maxFilesizeBytes = 1024 * 20;  // 20kb
+    const maxFilesizeBytes = 1024 * 1024 * 5;  // 5mb
     if (filesizeBytes > maxFilesizeBytes) {
         gtag('event', 'file_too_big');
         alert('File too big, select file under 20kb');
         this.value = '';
         return;
+    }
+
+    try {
+        const prices = await estimate_price(filesizeBytes, 15);
+        update_price(prices.usd, prices.service_fee_usd, prices.total_price_wei);
+    } catch {
+        alert("Can't process this file now. Try later or try another file");
+        update_price(0, 0, 0);
     }
 
     const filenameTag = document.getElementById("file-selected");
@@ -65,8 +72,7 @@ const startMinting = async function (event) {
 
     const formTag = document.getElementById("mint-form");
 
-    // TODO: Get propper value and gas prices and estimate
-    const transactionValueWei = BigInt("15000000000000000"); // ~25$
+    const transactionValueWei = BigInt(window.price_wei);
     const transactionValueWeiHex = '0x' + transactionValueWei.toString(16);
     const payload = {
       method: "eth_sendTransaction",
@@ -93,6 +99,30 @@ const startMinting = async function (event) {
     gtag('event', 'mint_done');
     formTag.submit();
 };
+
+
+const estimate_price = async function (filesize_bytes, fee_rate) {
+    const url = `/api/estimate_price?filesize_bytes=${filesize_bytes}&fee_rate=${fee_rate}`;
+    const resp = await fetch(url);
+    if (resp.status != 200) {
+        throw new Error('Bad response from server');
+    }
+    const data = await resp.json();
+    return data;
+}
+
+const round = function (num) {
+    return Math.round(num * 100) / 100;
+}
+
+const update_price = async function (price_usd, service_fee_usd, total_price_wei) {
+    window.price_usd = round(price_usd);
+    window.service_fee_usd = round(service_fee_usd);
+    window.price_wei = total_price_wei;
+
+    const price_tag = document.querySelector('#price_tag');
+    price_tag.innerText = `(~${window.price_usd}$ mint + ~${window.service_fee_usd}$ service fee)`;
+}
 
 
 addEventListener('DOMContentLoaded', (event) => {
