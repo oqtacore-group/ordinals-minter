@@ -49,6 +49,7 @@ class OrdWrapper(object):
             'sat': sat_price,
             'usd': usd_price,
             'eth': eth_price,
+            'wei': eth_price * decimal.Decimal('1000000000000000000'),
         }
 
     def get_balance(self):
