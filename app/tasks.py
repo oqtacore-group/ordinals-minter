@@ -70,7 +70,7 @@ def start_checking_order(order_uuid):
 
             ord_wrapper.index()
             try:
-                stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=10))
+                stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=15))
                 status = 'MINT_STARTED'
             except Exception as e:
                 stdout = str(e)

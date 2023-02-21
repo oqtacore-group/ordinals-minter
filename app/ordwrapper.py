@@ -9,9 +9,12 @@ class OrdWrapper(object):
         self.config = config
         self.wallet = wallet
 
-    def inscribe(self, filepath: str, fee_rate: int=10):
-        proc = self._run_command(['wallet', 'inscribe', '--dry-run', '--fee-rate', str(fee_rate), filepath])
-        #proc = self._run_command(['wallet', 'inscribe', '--fee-rate', str(fee_rate), filepath])
+    def inscribe(self, filepath: str, fee_rate: int=15, dry_run: bool=False):
+        command = ['wallet', 'inscribe', '--fee-rate', str(fee_rate), filepath]
+        if dry_run:
+            command = ['wallet', 'inscribe', '--dry-run', '--fee-rate', str(fee_rate), filepath]
+
+        proc = self._run_command(command)
         message = f'stdout: {proc.stdout = }\n{proc.stderr = }'
         print(message, flush=True)
 
