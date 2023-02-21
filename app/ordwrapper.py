@@ -1,6 +1,10 @@
+import decimal
 import json
 import subprocess
+import tempfile
 import time
+
+from app.shared.currencies import sat_to_usd, usd_to_eth
 
 
 class OrdWrapper(object):
@@ -25,6 +29,28 @@ class OrdWrapper(object):
 
         return res
 
+    def estimate_price(self, filesize_bytes: int, fee_rate: int) -> dict:
+        if filesize_bytes > 1024 * 1024 * 5:  # 5mb = 5 * 1024kb
+            raise Exception('File too big, use filesize under 5mb')
+
+        with tempfile.NamedTemporaryFile() as tmp:
+            # Create file of given size
+            for _ in range(filesize_bytes):
+                tmp.write(b'a')
+            tmp.flush()
+
+            sat_price = self._estimate_file_sat_price(tmp.name, fee_rate)
+            usd_price = sat_to_usd(sat_price)
+            eth_price = usd_to_eth(usd_price)
+
+        return {
+            'bytes': filesize_bytes,
+            'fee_rate': fee_rate,
+            'sat': sat_price,
+            'usd': usd_price,
+            'eth': eth_price,
+        }
+
     def get_balance(self):
         proc = self._run_command(['wallet', 'balance'])
 
@@ -33,6 +59,12 @@ class OrdWrapper(object):
     def index(self):
         proc = self._run_command(['index'])
         return proc
+
+    def _estimate_file_sat_price(self, filepath: str, fee_rate: int=15):
+        self.index()
+        res = self.inscribe(filepath, fee_rate, dry_run=True)
+        satoshi_fees = decimal.Decimal(res['fees'])
+        return satoshi_fees
 
     def _run_command(self, command: list[str]):
         args = ['ord', '--config', self.config, '--wallet', self.wallet] + command
