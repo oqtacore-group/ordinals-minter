@@ -16,7 +16,7 @@ from fastapi.templating import Jinja2Templates
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper
-from app.settings import FEE_RATE, MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
+from app.settings import FEE_RATE, MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, SERVER_PORT, TG_ALERTS_CHANNEL
 from app.shared.telegram import tg_send_message
 from app.tasks import start_checking_order
 
@@ -133,4 +133,4 @@ async def order(
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=1337, workers=1)
+    uvicorn.run(app, host='0.0.0.0', port=SERVER_PORT, workers=1)
