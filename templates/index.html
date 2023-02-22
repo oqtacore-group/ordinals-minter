@@ -20,12 +20,15 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-NZ3FZ2M');</script>
         <!-- End Google Tag Manager -->
+
     </head>
     <body>
         <div class="content">
-            <h1>Bitcoin NFT Ordinals Mint 🌿</h1>
-            Fast, convinient and secure way to mint <a href="http://ordinals.com">Bitcoin Ordinals</a>
-            <hr>
+            {% if not embed %}
+                <h1>Bitcoin NFT Ordinals Mint 🌿</h1>
+                Fast, convinient and secure way to mint <a href="http://ordinals.com">Bitcoin Ordinals</a>
+                <hr>
+            {% endif %}
 
             <h2>Let's Mint</h2>
             <form
@@ -75,7 +78,7 @@
             </form>
 
             Join us on social networks: <a href="https://discord.gg/DcJhtaXd">Discord</a>, <a href="https://twitter.com/BOrdinals">Twitter</a>
-
+            {% if not embed %}
             <hr>
 
             <h2>FAQ</h2>
@@ -119,6 +122,7 @@
             <div class="center">
                 <code>(c) <a href="https://oqtacore.com">Oqtacore</a> 2023</code>
             </div>
+            {% endif %}
         </div>
     </body>
 </html>

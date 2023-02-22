@@ -27,9 +27,10 @@ app.mount('/assets', StaticFiles(directory='assets'), name='assets')
 
 
 @app.get('/')
-def index(req: Request):
+def index(req: Request, embed: bool = False):
     context = {
         'request': req,
+        'embed': embed,
     }
     return templates.TemplateResponse('index.html', context)
 
