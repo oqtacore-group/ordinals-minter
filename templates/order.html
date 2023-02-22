@@ -24,6 +24,9 @@
                 <p>
                     We received your order and checking payment right now, soon we will start creating inscription. Reload this page in 2-5 minutes.
                 </p>
+                <p>
+                    If yoo see this page longer than 10 minutes, contact us via <a href="mailto:ordinals@oqtacore.com">email</a> or <a href="https://t.me/oqtacore">telegram</a>.
+                </p>
                 <div class="center">
                     <div class="lds-spinner" height="200px"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
                 </div>
@@ -42,9 +45,16 @@
                 <p>
                     2. When the transaction is mined, your inscription will become available here imemdiately: <a target="_blank" href="{{order.ordinals_url}}">{{order.ordinals_url}}</a>
                 </p>
+                <p>
+                    3. Created ord-compatible wallet and ready to get your inscription? Contact us via <a href="mailto:ordinals@oqtacore.com">email</a> or <a href="https://t.me/oqtacore">telegram</a>.
+                </p>
+
             {% elif order.status == 'MINT_ERROR' %}
                 <p>
                     Sadly but there were an error while processing your order, please contact us and we will help you with refund or manual uploading.
+                </p>
+                <p>
+                    Contact us via <a href="mailto:ordinals@oqtacore.com">email</a> or <a href="https://t.me/oqtacore">telegram</a>.
                 </p>
                 <p>{{ order }}</p>
             {% endif %}
