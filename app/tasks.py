@@ -3,7 +3,7 @@ import time
 
 import sqlmodel
 
-from huey import SqliteHuey
+from huey import SqliteHuey, crontab
 from huey.exceptions import RetryTask
 from web3 import Web3
 
@@ -92,7 +92,7 @@ def start_checking_order(order_uuid):
     return True
 
 
-@huey.periodic_task(huey.crontab(minute='*/15'))  # Every 15 mins
+@huey.periodic_task(crontab(minute='*/15'))  # Every 15 mins
 def background_ord_reindexed():
     ord_wrapper = OrdWrapper()
     ord_wrapper.index()
