@@ -107,6 +107,7 @@ async def order(
         order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
         r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
 
+        # TODO: Add try/except
         ord_wrapper = OrdWrapper()
         prices = ord_wrapper.estimate_price(file.size, FEE_RATE)
         if decimal.Decimal(value_wei_decimal) < prices['total_price_wei']:
