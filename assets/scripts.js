@@ -1,12 +1,17 @@
+const track_event = function (event_name) {
+    gtag('event', event_name);
+    ym(92487407, 'reachGoal', event_name);
+};
+
 // Show filename near button on file uploaded
 const showFilename = async function () {
-    gtag('event', 'file_uploaded');
+    track_event('file_uploaded');
     const inputTag = document.getElementById("file-upload");
 
     const filesizeBytes = inputTag.files?.item(0)?.size;
     const maxFilesizeBytes = 1024 * 1024 * 5;  // 5mb
     if (filesizeBytes > maxFilesizeBytes) {
-        gtag('event', 'file_too_big');
+        track_event('file_too_big');
         alert('File too big, select file under 20kb');
         this.value = '';
         return;
@@ -30,7 +35,7 @@ const showFilename = async function () {
 // Check if MetaMask installed and try to connect to it's account
 const connectMetaMask = async function () {
     if (typeof window.ethereum === 'undefined') {
-        gtag('event', 'metamask_missing');
+        track_event('metamask_missing');
         alert('Install MetaMask extension first!');
         return false;
     }
@@ -40,10 +45,10 @@ const connectMetaMask = async function () {
         const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
         metamaskAccTag.innerText = accounts[0];
         await ethereum.request({method: 'wallet_switchEthereumChain', params: [{ chainId: '0x1' }]});
-        gtag('event', 'metamask_connected');
+        track_event('metamask_connected');
         return accounts[0];
     } catch {
-        gtag('event', 'metamask_connection_reject');
+        track_event('metamask_connection_reject');
         metamaskAccTag.innerText = `Not Connected`;
     }
     return false;
@@ -94,11 +99,11 @@ const startMinting = async function (event) {
         formTag.appendChild(createInputTag("sender_wallet_addr", account));
         formTag.appendChild(createInputTag("value_wei", transactionValueWei.toString()));
     } catch (err) {
-        gtag('event', 'metamask_transaction_error');
+        track_event('metamask_transaction_error');
         alert("Error while processing transaction");
         return false;
     }
-    gtag('event', 'mint_done');
+    track_event('mint_done');
     formTag.submit();
 };
 
