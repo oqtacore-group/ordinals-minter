@@ -1,3 +1,4 @@
+import decimal
 import json
 import time
 
@@ -10,6 +11,7 @@ from web3 import Web3
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper, OrdWrapperMock
 from app.settings import ETH_RPC_URL, FEE_RATE, TG_ALERTS_CHANNEL
+from app.shared.currencies import eth_to_wei, usd_to_eth
 from app.shared.telegram import tg_send_message
 
 web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
@@ -66,10 +68,19 @@ def start_checking_order(order_uuid):
         print(f'{is_mined = }')
 
         if is_mined:
-            #ord_wrapper = OrdWrapperMock()
             ord_wrapper = OrdWrapper()
-
             ord_wrapper.index()
+
+            # XXX: Check that price is profitable for us, in case of errors add gap of 1$
+            one_usd_in_wei = eth_to_wei(usd_to_eth(1))
+            prices = ord_wrapper.estimate_price(order.filesize_bytes, order.fee_rate)
+            if decimal.Decimal(txn['value']) < decimal.Decimal(prices['total_price_wei']) + one_usd_in_wei:
+                order.status = 'ERROR_SMALL_WEI'
+                db.add(order)
+                db.commit()
+                print(order, prices)
+                return False
+
             try:
                 stdout = json.dumps(ord_wrapper.inscribe(order.filepath, fee_rate=FEE_RATE))
                 status = 'MINT_STARTED'

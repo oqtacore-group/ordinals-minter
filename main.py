@@ -100,6 +100,8 @@ async def order(
             value_wei=value_wei,
             receiver_btc_addres=receiver_btc_addres,
             status='CHECKING_PAYMENT',
+            filesize_bytes=file.size,
+            fee_rate=FEE_RATE,
         )
         order_filepath = order.filepath
 
@@ -107,16 +109,6 @@ async def order(
         order_dict.pop('_sa_instance_state')
         order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
         r = tg_send_message(f'<b>New order</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
-
-        # TODO: Add try/except
-        ord_wrapper = OrdWrapper()
-        prices = ord_wrapper.estimate_price(file.size, FEE_RATE)
-        if decimal.Decimal(value_wei_decimal) < prices['total_price_wei']:
-            order.status = 'ERROR_SMALL_WEI'
-            db.add(order)
-            db.commit()
-            print(order, prices)
-            raise HTTPException(status_code=400, detail='Wei value too small. Contact support if you think this is an error.')
 
         db.add(order)
         db.commit()

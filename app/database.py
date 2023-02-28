@@ -37,6 +37,8 @@ class MintOrder(sqlmodel.SQLModel, table=True):
     value_wei: str
     receiver_btc_addres: str
     status: str
+    filesize_bytes: int
+    fee_rate: int
     ord_stdout: Optional[str] = None
 
     @property
