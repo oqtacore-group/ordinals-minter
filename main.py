@@ -86,6 +86,7 @@ async def order(
     sender_wallet_addr: str = Form(),
     value_wei: str = Form(),
     receiver_btc_addres: Optional[str] = Form(''),
+    email: Optional[str] = Form(''),
 ):
     order_uuid = str(uuid.uuid4())
 
@@ -112,6 +113,7 @@ async def order(
             receiver_eth_addr=RECEIVER_ETH_ADDR,
             value_wei=value_wei,
             receiver_btc_addres=receiver_btc_addres,
+            email=email,
             status='CHECKING_PAYMENT',
             filesize_bytes=file.size,
             fee_rate=fee_rate,

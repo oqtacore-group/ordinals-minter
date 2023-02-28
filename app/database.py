@@ -36,6 +36,7 @@ class MintOrder(sqlmodel.SQLModel, table=True):
     receiver_eth_addr: str
     value_wei: str
     receiver_btc_addres: str
+    email: str
     status: str
     filesize_bytes: int
     fee_rate: int
