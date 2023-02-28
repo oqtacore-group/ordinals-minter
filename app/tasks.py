@@ -10,7 +10,7 @@ from web3 import Web3
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper, OrdWrapperMock
-from app.settings import ETH_RPC_URL, FEE_RATE, TG_ALERTS_CHANNEL
+from app.settings import ETH_RPC_URL, FEE_RATE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
 from app.shared.currencies import eth_to_wei, usd_to_eth
 from app.shared.telegram import tg_send_message
 
@@ -66,6 +66,18 @@ def start_checking_order(order_uuid):
         is_mined = (txn_receipt['status'] == 1)
         print(txn_receipt)
         print(f'{is_mined = }')
+
+        if txn['from'] != order.sender_eth_addr:
+            order.status = 'ERROR_WRONG_FROM_ADDR'
+            db.add(order)
+            db.commit()
+            return False
+
+        if txn['to'] != RECEIVER_ETH_ADDR:
+            order.status = 'ERROR_WRONG_TO_ADDR'
+            db.add(order)
+            db.commit()
+            return False
 
         if is_mined:
             ord_wrapper = OrdWrapper()
