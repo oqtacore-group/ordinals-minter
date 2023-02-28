@@ -9,6 +9,7 @@ import aiofiles
 from fastapi import FastAPI, Form, Request, UploadFile, status, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
+import requests
 import sqlmodel
 import uvicorn
 
@@ -24,6 +25,16 @@ app = FastAPI()
 templates = Jinja2Templates(directory='templates')
 
 app.mount('/assets', StaticFiles(directory='assets'), name='assets')
+
+
+def get_fee_rate():
+    try:
+        r = requests.get('https://mempool.space/api/v1/fees/recommended')
+        fast_fee_rate = r.json()['fastestFee']
+    except:
+        fast_fee_rate = FEE_RATE
+
+    return fast_fee_rate
 
 
 @app.get('/')
@@ -57,6 +68,8 @@ def order(req: Request, order_uuid: str):
 
 @app.get('/api/estimate_price')
 async def estimate_price_route(filesize_bytes: int, fee_rate: int):
+    # XXX: Ignore value from frontend for now, just use fastest
+    fee_rate = get_fee_rate()
     ord_wrapper = OrdWrapper()
     try:
         res = ord_wrapper.estimate_price(filesize_bytes, fee_rate)
@@ -76,10 +89,10 @@ async def order(
 ):
     order_uuid = str(uuid.uuid4())
 
-    value_wei_decimal = decimal.Decimal(value_wei)
-
     if file.size > MAX_FILESIZE_BYTES:
         raise HTTPException(status_code=400, detail='File too big')
+
+    fee_rate = get_fee_rate()
 
     with get_db() as db:
         existing_order = db.exec(
@@ -101,7 +114,7 @@ async def order(
             receiver_btc_addres=receiver_btc_addres,
             status='CHECKING_PAYMENT',
             filesize_bytes=file.size,
-            fee_rate=FEE_RATE,
+            fee_rate=fee_rate,
         )
         order_filepath = order.filepath
 
