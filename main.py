@@ -18,6 +18,7 @@ from fastapi.templating import Jinja2Templates
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper
 from app.settings import FEE_RATE, MAX_FILESIZE_BYTES, MIN_WEI_VALUE, RECEIVER_ETH_ADDR, SERVER_PORT, TG_ALERTS_CHANNEL
+from app.shared.mempool import get_fee_rates
 from app.shared.telegram import tg_send_message
 from app.tasks import start_checking_order
 
@@ -27,21 +28,14 @@ templates = Jinja2Templates(directory='templates')
 app.mount('/assets', StaticFiles(directory='assets'), name='assets')
 
 
-def get_fee_rate():
-    try:
-        r = requests.get('https://mempool.space/api/v1/fees/recommended')
-        fast_fee_rate = r.json()['fastestFee']
-    except:
-        fast_fee_rate = FEE_RATE
-
-    return fast_fee_rate
-
-
 @app.get('/')
 def index(req: Request, embed: bool = False):
+    fee_rates = get_fee_rates()
+
     context = {
         'request': req,
         'embed': embed,
+        'fees': fee_rates,
     }
     return templates.TemplateResponse('index.html', context)
 
@@ -68,8 +62,6 @@ def order(req: Request, order_uuid: str):
 
 @app.get('/api/estimate_price')
 async def estimate_price_route(filesize_bytes: int, fee_rate: int):
-    # XXX: Ignore value from frontend for now, just use fastest
-    fee_rate = get_fee_rate()
     ord_wrapper = OrdWrapper()
     try:
         res = ord_wrapper.estimate_price(filesize_bytes, fee_rate)
@@ -83,6 +75,7 @@ async def estimate_price_route(filesize_bytes: int, fee_rate: int):
 async def order(
     file: UploadFile,
     tx_hash: str = Form(),
+    fee_rate: int = Form(),
     sender_wallet_addr: str = Form(),
     value_wei: str = Form(),
     receiver_btc_addres: Optional[str] = Form(''),
@@ -92,8 +85,6 @@ async def order(
 
     if file.size > MAX_FILESIZE_BYTES:
         raise HTTPException(status_code=400, detail='File too big')
-
-    fee_rate = get_fee_rate()
 
     with get_db() as db:
         existing_order = db.exec(

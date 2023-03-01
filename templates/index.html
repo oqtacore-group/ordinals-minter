@@ -22,7 +22,10 @@
         <!-- End Google Tag Manager -->
 
         <script>
+            window.fee_rate = {{fees['fastestFee']}};
+
             addEventListener('DOMContentLoaded', (event) => {
+                // Handle past orders
                 const prev_orders = get_past_orders();
                 // If no orders just return
                 if (Object.keys(prev_orders).length === 0) {
@@ -42,6 +45,17 @@
                     order_li.appendChild(order_a);
                     prev_orders_ul_tag.appendChild(order_li);
                 }
+
+                // Handle fee changes
+                var radios = document.querySelectorAll('input[type=radio][name="fee_rate"]');
+
+                function updatePriceOnFeeChange(event) {
+                    window.fee_rate = +this.value;
+                    recalc_price(window.filesize_bytes, window.fee_rate);
+                }
+                Array.prototype.forEach.call(radios, function(radio) {
+                    radio.addEventListener('change', updatePriceOnFeeChange);
+                });
             });
         </script>
 
@@ -90,14 +104,30 @@
                 <br>
 
                 <div>
-                    <label for="btc-address"><b>Step 3. Enter BTC address to receive your minted file. (This field is optional, you will be able to add wallet later to get your inscription)</b></label>
+                    <label for="fee"><b>Step 3. Set required fee rate and upload speed</b></label>
+                    <br>
+                    <fieldset>
+                        <input checked id="fast-radio" type="radio" name="fee_rate" value="{{fees['fastestFee']}}">
+                        <label for="fast-radio">Fast ({{fees['fastestFee']}} sat/vByte)</label>
+                        <br>
+                        <input id="med-radio" type="radio" name="fee_rate" value="{{fees['halfHourFee']}}">
+                        <label for="med-radio">Normal ({{fees['halfHourFee']}} sat/vByte)</label>
+                        <br>
+                        <input id="slow-radio" type="radio" name="fee_rate" value="{{fees['hourFee']}}">
+                        <label for="slow-radio">Slow ({{fees['hourFee']}} sat/vByte)</label>
+                    </fieldset>
+                </div>
+                <br>
+
+                <div>
+                    <label for="btc-address"><b>Step 4. Enter BTC address to receive your minted file. (This field is optional, you will be able to add wallet later to get your inscription)</b></label>
                     <br>
                     <input id="btc-address" type="text" name="receiver_btc_addres"/>
                 </div>
                 <br>
 
                 <div>
-                    <label for="email"><b>Step 4. Enter email address to receive extra copy of your order info. (This field is optional)</b></label>
+                    <label for="email"><b>Step 5. Enter email address to receive extra copy of your order info. (This field is optional)</b></label>
                     <br>
                     <input id="email" type="text" name="email"/>
                 </div>

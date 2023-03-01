@@ -24,6 +24,22 @@ function humanFileSize(size) {
 }
 
 
+const recalc_price = function (filesize_bytes, fee_rate) {
+    if (!filesize_bytes || !fee_rate) {
+        return;
+    }
+    try {
+        const prices = await estimate_price(filesizeBytes, 15);
+        update_price(prices.usd, prices.service_fee_usd, prices.total_price_wei);
+    } catch {
+        alert("Can't process this file now. Try later or try another file");
+        this.value = '';
+        update_price(0, 0, 0);
+        return;
+    }
+};
+
+
 // Show filename near button on file uploaded
 const showFilename = async function () {
     track_event('file_uploaded');
@@ -38,15 +54,9 @@ const showFilename = async function () {
         return;
     }
 
-    try {
-        const prices = await estimate_price(filesizeBytes, 15);
-        update_price(prices.usd, prices.service_fee_usd, prices.total_price_wei);
-    } catch {
-        alert("Can't process this file now. Try later or try another file");
-        this.value = '';
-        update_price(0, 0, 0);
-        return;
-    }
+    window.filesize_bytes = filesizeBytes;
+
+    recalc_price(filesizeBytes, window.fee_rate);
 
     const filenameTag = document.getElementById("file-selected");
     const filesize_human = humanFileSize(filesizeBytes);
