@@ -11,7 +11,7 @@ from web3 import Web3
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper, OrdWrapperMock
 from app.settings import ETH_RPC_URL, FEE_RATE, RECEIVER_ETH_ADDR, TG_ALERTS_CHANNEL
-from app.shared.currencies import eth_to_wei, usd_to_eth
+from app.shared.currencies import eth_to_wei, sat_to_usd, usd_to_eth
 from app.shared.telegram import tg_send_message
 
 web3 = Web3(Web3.HTTPProvider(ETH_RPC_URL))
@@ -111,6 +111,12 @@ def start_checking_order(order_uuid):
                 order_dict.pop('_sa_instance_state')
                 order_json = json.dumps(order_dict, ensure_ascii=False, sort_keys=True, indent=2)
                 r = tg_send_message(f'<b>Error</b>\n\n<code>{order_json}</code>', TG_ALERTS_CHANNEL)
+
+            # Send message to telegram with money left on BTC wallet
+            sat_balance = ord_wrapper.get_balance()['cardinal']
+            usd_balance = sat_to_usd(sat_balance)
+            message = f'<b>Money left on BTC wallet</b>\n\nBalance: {usd_balance:.2f}$'
+            r = tg_send_message(message, TG_ALERTS_CHANNEL)
 
     return True
 
