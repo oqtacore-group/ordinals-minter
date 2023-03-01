@@ -60,6 +60,17 @@
                 <p>{{ order }}</p>
             {% endif %}
 
+            {% if order.receiver_btc_addres == '' %}
+                <br>
+                <form method="post" class="pure-form">
+                    <label for="btc-address"><b>Ready to add btc address to receive your inscription? Put it in form below</b></label>
+                    <br>
+                    <input style='width: 70%' id="btc-address" type="text" name="receiver_btc_addres"/>
+                    <button class="pure-button pure-button-primary" type="submit">Update Address</button>
+                </form>
+            </form>
+            {% endif %}
+
             <hr>
             <div class="center">
                 <code>(c) <a href="https://oqtacore.com">Oqtacore</a> 2023</code>

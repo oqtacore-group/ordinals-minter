@@ -60,6 +60,34 @@ def order(req: Request, order_uuid: str):
     return templates.TemplateResponse('order.html', context)
 
 
+@app.post('/orders/{order_uuid}')
+def update_order_btc_addr(
+    order_uuid: str,
+    receiver_btc_addres: str = Form(),
+):
+    with get_db() as db:
+        order = db.exec(
+            sqlmodel
+            .select(MintOrder)
+            .where(MintOrder.order_uuid == order_uuid)
+            .where(MintOrder.receiver_btc_addres == '')
+        ).first()
+
+        if order:
+            order.receiver_btc_addres = receiver_btc_addres
+            r = tg_send_message(
+                f'<b>Wallet Added</b>\n\nWallet <code>{receiver_btc_addres}</code> were added to order <code>{order_uuid}</code>',
+                TG_ALERTS_CHANNEL,
+            )
+            db.add(order)
+            db.commit()
+
+    return RedirectResponse(
+        f'/orders/{order_uuid}',
+        status_code=status.HTTP_302_FOUND,
+    )
+
+
 @app.get('/api/estimate_price')
 async def estimate_price_route(filesize_bytes: int, fee_rate: int):
     ord_wrapper = OrdWrapper()
