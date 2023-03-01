@@ -21,6 +21,30 @@
         })(window,document,'script','dataLayer','GTM-NZ3FZ2M');</script>
         <!-- End Google Tag Manager -->
 
+        <script>
+            addEventListener('DOMContentLoaded', (event) => {
+                const prev_orders = get_past_orders();
+                // If no orders just return
+                if (Object.keys(prev_orders).length === 0) {
+                    return;
+                }
+
+                const prev_orders_ul_tag = document.querySelector('#prev-orders');
+                // Clean el "Nothing Here Yet"
+                prev_orders_ul_tag.innerHTML = '';
+
+                for (const order_pathname in prev_orders) {
+                    const order_a = document.createElement('a');
+                    order_a.href = order_pathname;
+                    order_a.innerText = order_pathname;
+
+                    const order_li = document.createElement('li');
+                    order_li.appendChild(order_a);
+                    prev_orders_ul_tag.appendChild(order_li);
+                }
+            });
+        </script>
+
     </head>
     <body>
         <div class="content">
@@ -85,6 +109,12 @@
             </form>
 
             Join us on social networks: <a href="https://discord.gg/DcJhtaXd">Discord</a>, <a href="https://twitter.com/BOrdinals">Twitter</a>
+            <hr>
+            <h2>Previous orders</h2>
+            <ul id="prev-orders">
+                <li>Notging here yet</li>
+            </ul>
+
             {% if not embed %}
             <hr>
 

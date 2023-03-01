@@ -4,6 +4,19 @@ const track_event = function (event_name) {
 };
 
 
+const get_past_orders = function () {
+    const orders = JSON.parse(window.localStorage.getItem('mint_orders') || '{}');
+    return orders;
+};
+
+
+const save_current_order = function () {
+    const orders = get_past_orders();
+    orders[window.location.pathname] = true;
+    window.localStorage.setItem('mint_orders', JSON.stringify(orders));
+};
+
+
 // XXX: Copied from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
 function humanFileSize(size) {
     var i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
