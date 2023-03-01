@@ -67,13 +67,13 @@ def start_checking_order(order_uuid):
         print(txn_receipt)
         print(f'{is_mined = }')
 
-        if txn['from'] != order.sender_eth_addr:
+        if txn['from'].lower() != order.sender_eth_addr.lower():
             order.status = 'ERROR_WRONG_FROM_ADDR'
             db.add(order)
             db.commit()
             return False
 
-        if txn['to'] != RECEIVER_ETH_ADDR:
+        if txn['to'].lower() != RECEIVER_ETH_ADDR.lower():
             order.status = 'ERROR_WRONG_TO_ADDR'
             db.add(order)
             db.commit()
