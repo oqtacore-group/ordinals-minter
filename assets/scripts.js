@@ -3,6 +3,14 @@ const track_event = function (event_name) {
     ym(92487407, 'reachGoal', event_name);
 };
 
+
+// XXX: Copied from https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+function humanFileSize(size) {
+    var i = size == 0 ? 0 : Math.floor( Math.log(size) / Math.log(1024) );
+    return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+}
+
+
 // Show filename near button on file uploaded
 const showFilename = async function () {
     track_event('file_uploaded');
@@ -28,7 +36,8 @@ const showFilename = async function () {
     }
 
     const filenameTag = document.getElementById("file-selected");
-    filenameTag.innerText = inputTag.files?.item(0)?.name;
+    const filesize_human = humanFileSize(filesizeBytes);
+    filenameTag.innerText = `${inputTag.files?.item(0)?.name} (${filesize_human})`;
 };
 
 
