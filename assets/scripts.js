@@ -29,7 +29,7 @@ const recalc_price = async function (filesize_bytes, fee_rate) {
         return;
     }
     try {
-        const prices = await estimate_price(filesizeBytes, 15);
+        const prices = await estimate_price(filesize_bytes, fee_rate);
         await update_price(prices.usd, prices.service_fee_usd, prices.total_price_wei);
     } catch {
         alert("Can't process this file now. Try later or try another file");
