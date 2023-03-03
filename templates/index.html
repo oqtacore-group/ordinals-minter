@@ -49,9 +49,9 @@
                 // Handle fee changes
                 var radios = document.querySelectorAll('input[type=radio][name="fee_rate"]');
 
-                function updatePriceOnFeeChange(event) {
+                async function updatePriceOnFeeChange(event) {
                     window.fee_rate = +this.value;
-                    recalc_price(window.filesize_bytes, window.fee_rate);
+                    await recalc_price(window.filesize_bytes, window.fee_rate);
                 }
                 Array.prototype.forEach.call(radios, function(radio) {
                     radio.addEventListener('change', updatePriceOnFeeChange);
