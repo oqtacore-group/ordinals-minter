@@ -24,7 +24,7 @@ function humanFileSize(size) {
 }
 
 
-const recalc_price = function (filesize_bytes, fee_rate) {
+const recalc_price = async function (filesize_bytes, fee_rate) {
     if (!filesize_bytes || !fee_rate) {
         return;
     }
@@ -55,8 +55,8 @@ const showFilename = async function () {
     }
 
     window.filesize_bytes = filesizeBytes;
+    await recalc_price(window.filesize_bytes, window.fee_rate);
 
-    recalc_price(filesizeBytes, window.fee_rate);
 
     const filenameTag = document.getElementById("file-selected");
     const filesize_human = humanFileSize(filesizeBytes);
