@@ -46,6 +46,28 @@ const recalc_price = async function (filesize_bytes, fee_rate) {
 };
 
 
+const estimate_compressed_size = async function (file) {
+    var compressFormTag = new FormData()
+    compressFormTag.append('file', file)
+
+    const compressParams = {
+        method: 'POST',
+        body: compressFormTag,
+    }
+
+    try {
+        const resp = await fetch('/api/files', compressParams);
+        if (resp.status != 200) {
+            throw new Error('Bad response from server');
+        }
+        const data = await resp.json();
+        return data['compressed_filesize_bytes'];
+    } catch {
+        return file.size;
+    }
+};
+
+
 // Show filename near button on file uploaded
 const showFilename = async function () {
     track_event('file_uploaded');
@@ -55,20 +77,46 @@ const showFilename = async function () {
     const maxFilesizeBytes = 1024 * 1024 * 5;  // 5mb
     if (filesizeBytes > maxFilesizeBytes) {
         track_event('file_too_big');
-        alert('File too big, select file under 20kb');
+        alert('File too big, select file under 5mb');
         this.value = '';
         return;
     }
 
-    window.filesize_bytes = filesizeBytes;
+    window.compressed_filesize_bytes = await estimate_compressed_size(inputTag.files[0]);
+    window.original_filesize_bytes = filesizeBytes;
+
+    const should_optimize = document.querySelector('#optimize').checked;
+    window.filesize_bytes = should_optimize ? window.compressed_filesize_bytes : window.original_filesize_bytes;
+
     await recalc_price(window.filesize_bytes, window.fee_rate);
 
+    const optimizePctTag = document.getElementById("optimize_pct");
+    const compress_pct = (100 * (1 - window.filesize_bytes / window.original_filesize_bytes)).toFixed(2)
+    optimizePctTag.innerText = `(${compress_pct}% Saved)`
 
     const filenameTag = document.getElementById("file-selected");
-    const filesize_human = humanFileSize(filesizeBytes);
+    const filesize_human = humanFileSize(window.filesize_bytes);
     filenameTag.innerText = `${inputTag.files?.item(0)?.name} (${filesize_human})`;
 };
 
+const optimize_changed = async function (event) {
+    const inputTag = document.getElementById("file-upload");
+    if (!inputTag.files?.item(0)?.name) {
+        return;
+    }
+    const should_optimize = document.querySelector('#optimize').checked;
+    window.filesize_bytes = should_optimize ? window.compressed_filesize_bytes : window.original_filesize_bytes;
+
+    await recalc_price(window.filesize_bytes, window.fee_rate);
+
+    const filenameTag = document.getElementById("file-selected");
+    const filesize_human = humanFileSize(window.filesize_bytes);
+    filenameTag.innerText = `${inputTag.files?.item(0)?.name} (${filesize_human})`;
+
+    const optimizePctTag = document.getElementById("optimize_pct");
+    const compress_pct = (100 * (1 - window.filesize_bytes / window.original_filesize_bytes)).toFixed(2)
+    optimizePctTag.innerText = `(${compress_pct}% Saved)`
+}
 
 // Check if MetaMask installed and try to connect to it's account
 const connectMetaMask = async function () {

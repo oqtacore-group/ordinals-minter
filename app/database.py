@@ -32,6 +32,7 @@ class MintOrder(sqlmodel.SQLModel, table=True):
     created_ts: int
     tx_hash: str
     filename: str
+    optimize: bool
     sender_eth_addr: str
     receiver_eth_addr: str
     value_wei: str

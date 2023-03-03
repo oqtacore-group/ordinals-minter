@@ -77,9 +77,14 @@
                 <div>
                     <label for="file"><b>Step 2. Upload file to be minted</b></label>
                     <br>
+                    <fieldset>
+                        <input type="checkbox" id="optimize" name="optimize" onchange="optimize_changed(event)">
+                        <label for="optimize">Compress images</label>
+                    </fieldset>
                     <div class="upload-btn-wrapper">
                         <a class="pure-button">Upload a file</a>
                         <span id="file-selected"></span>
+                        <span id="optimize_pct"></span>
                         <input
                             required
                             id="file-upload"

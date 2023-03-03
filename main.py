@@ -2,6 +2,7 @@ import copy
 import decimal
 import json
 import os
+import pathlib
 import time
 from typing import Optional
 import uuid
@@ -14,6 +15,7 @@ import sqlmodel
 import uvicorn
 
 from fastapi.templating import Jinja2Templates
+from app.compress import compress_file
 
 from app.database import MintOrder, get_db
 from app.ordwrapper import OrdWrapper
@@ -99,9 +101,33 @@ async def estimate_price_route(filesize_bytes: int, fee_rate: int):
     return res
 
 
+@app.post('/api/files')
+async def estimate_price_route(file: UploadFile):
+    # Save file to disk
+    os.makedirs('./storage', exist_ok=True)
+    order_filepath = pathlib.Path(f'./storage/{uuid.uuid4()}_{file.filename}')
+    async with aiofiles.open(order_filepath, 'wb') as out_file:
+        while content := await file.read(1024):
+            await out_file.write(content)
+
+    compressed_filepath = compress_file(order_filepath)
+
+    compressed_filesize_bytes = os.path.getsize(compressed_filepath)
+    compress_pct = round(100 * compressed_filesize_bytes / file.size, 2)
+
+    return {
+        'filepath': order_filepath,
+        'compressed_filepath': compressed_filepath,
+        'filesize_bytes': file.size,
+        'compressed_filesize_bytes': compressed_filesize_bytes,
+        'compress_pct': compress_pct,
+    }
+
+
 @app.post('/api/orders')
 async def order(
     file: UploadFile,
+    optimize: Optional[bool] = Form(False),
     tx_hash: str = Form(),
     fee_rate: int = Form(),
     sender_wallet_addr: str = Form(),
@@ -113,6 +139,17 @@ async def order(
 
     if file.size > MAX_FILESIZE_BYTES:
         raise HTTPException(status_code=400, detail='File too big')
+
+    # Save file to disk
+    os.makedirs('./storage', exist_ok=True)
+    order_filepath = pathlib.Path(f'./storage/{tx_hash}_{file.filename}')
+    async with aiofiles.open(order_filepath, 'wb') as out_file:
+        while content := await file.read(1024):
+            await out_file.write(content)
+
+    final_filename = order_filepath.name
+    if optimize:
+        final_filename = str(compress_file(order_filepath).name)
 
     with get_db() as db:
         existing_order = db.exec(
@@ -127,7 +164,8 @@ async def order(
             order_uuid=order_uuid,
             created_ts=time.time(),
             tx_hash=tx_hash,
-            filename=file.filename,
+            filename=final_filename,
+            optimize=optimize,
             sender_eth_addr=sender_wallet_addr,
             receiver_eth_addr=RECEIVER_ETH_ADDR,
             value_wei=value_wei,
@@ -137,7 +175,6 @@ async def order(
             filesize_bytes=file.size,
             fee_rate=fee_rate,
         )
-        order_filepath = order.filepath
 
         order_dict = copy.deepcopy(order.__dict__)
         order_dict.pop('_sa_instance_state')
@@ -148,12 +185,6 @@ async def order(
         db.commit()
 
     start_checking_order(order_uuid)
-
-    os.makedirs('./storage', exist_ok=True)
-    async with aiofiles.open(order_filepath, 'wb') as out_file:
-        while content := await file.read(1024):
-            await out_file.write(content)
-
     return RedirectResponse(
         f'/orders/{order_uuid}',
         status_code=status.HTTP_302_FOUND,
