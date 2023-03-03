@@ -4,6 +4,12 @@ const track_event = function (event_name) {
 };
 
 
+const updatePriceOnFeeChange = async function (event) {
+    window.fee_rate = +event.currentTarget.value;
+    await recalc_price(window.filesize_bytes, window.fee_rate);
+};
+
+
 const get_past_orders = function () {
     const orders = JSON.parse(window.localStorage.getItem('mint_orders') || '{}');
     return orders;

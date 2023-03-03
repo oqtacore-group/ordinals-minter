@@ -45,17 +45,6 @@
                     order_li.appendChild(order_a);
                     prev_orders_ul_tag.appendChild(order_li);
                 }
-
-                // Handle fee changes
-                var radios = document.querySelectorAll('input[type=radio][name="fee_rate"]');
-
-                async function updatePriceOnFeeChange(event) {
-                    window.fee_rate = +this.value;
-                    await recalc_price(window.filesize_bytes, window.fee_rate);
-                }
-                Array.prototype.forEach.call(radios, function(radio) {
-                    radio.addEventListener('change', updatePriceOnFeeChange);
-                });
             });
         </script>
 
@@ -107,13 +96,13 @@
                     <label for="fee"><b>Step 3. Set required fee rate and upload speed</b></label>
                     <br>
                     <fieldset>
-                        <input checked id="fast-radio" type="radio" name="fee_rate" value="{{fees['fastestFee']}}">
+                        <input checked id="fast-radio" type="radio" name="fee_rate" value="{{fees['fastestFee']}}" onchange="updatePriceOnFeeChange(event)">
                         <label for="fast-radio">Fast ({{fees['fastestFee']}} sat/vByte)</label>
                         <br>
-                        <input id="med-radio" type="radio" name="fee_rate" value="{{fees['halfHourFee']}}">
+                        <input id="med-radio" type="radio" name="fee_rate" value="{{fees['halfHourFee']}}" onchange="updatePriceOnFeeChange(event)">
                         <label for="med-radio">Normal ({{fees['halfHourFee']}} sat/vByte)</label>
                         <br>
-                        <input id="slow-radio" type="radio" name="fee_rate" value="{{fees['hourFee']}}">
+                        <input id="slow-radio" type="radio" name="fee_rate" value="{{fees['hourFee']}}" onchange="updatePriceOnFeeChange(event)">
                         <label for="slow-radio">Slow ({{fees['hourFee']}} sat/vByte)</label>
                     </fieldset>
                 </div>
