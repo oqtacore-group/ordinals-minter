@@ -14,6 +14,7 @@ a {
   position: relative;
   overflow: hidden;
   display: inline-block;
+  cursor: pointer;
 }
 
 .upload-btn-wrapper input[type=file] {
