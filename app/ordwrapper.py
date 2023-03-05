@@ -39,7 +39,10 @@ class OrdWrapper(object):
                 tmp.write(b'a')
             tmp.flush()
 
-            sat_price = self._estimate_file_sat_price(tmp.name, fee_rate)
+            try:
+                sat_price = self._estimate_file_sat_price(tmp.name, fee_rate)
+            except:
+                sat_price = int(filesize_bytes / 3.7 * fee_rate)
             usd_price = sat_to_usd(sat_price)
             eth_price = usd_to_eth(usd_price)
             wei_price = eth_to_wei(eth_price)
