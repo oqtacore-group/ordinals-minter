@@ -86,7 +86,7 @@ def start_checking_order(order_uuid):
             # XXX: Check that price is profitable for us, in case of errors add gap of 1$
             one_usd_in_wei = eth_to_wei(usd_to_eth(1))
             prices = ord_wrapper.estimate_price(order.filesize_bytes, order.fee_rate)
-            if decimal.Decimal(txn['value']) < decimal.Decimal(prices['total_price_wei']) + one_usd_in_wei:
+            if decimal.Decimal(txn['value']) < decimal.Decimal(prices['total_price_wei']) - 3 * one_usd_in_wei:
                 order.status = 'ERROR_SMALL_WEI'
                 db.add(order)
                 db.commit()
